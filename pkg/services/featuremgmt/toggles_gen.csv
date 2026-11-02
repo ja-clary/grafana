@@ -220,8 +220,6 @@ Created,Name,Stage,Owner,requiresDevMode,RequiresRestart,FrontendOnly
 2025-07-25,kubernetesAuthnMutation,experimental,@grafana/identity-access-team,false,false,false
 2025-11-25,kubernetesExternalGroupMapping,experimental,@grafana/identity-access-team,false,false,false
 2025-05-23,restoreDashboards,experimental,@grafana/grafana-search-navigate-organise,false,false,false
-2025-12-10,recentlyViewedDashboards,experimental,@grafana/grafana-search-navigate-organise,false,false,true
-2026-01-13,experimentRecentlyViewedDashboards,experimental,@grafana/grafana-search-navigate-organise,false,false,true
 2025-06-06,alertEnrichment,experimental,@grafana/alerting-squad,false,false,false
 2025-07-31,alertEnrichmentMultiStep,experimental,@grafana/alerting-squad,false,false,false
 2025-07-31,alertEnrichmentConditional,experimental,@grafana/alerting-squad,false,false,false

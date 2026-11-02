@@ -14,6 +14,10 @@ import { contextSrv } from 'app/core/services/context_srv';
 import BrowseDashboardsPage from './BrowseDashboardsPage';
 import * as permissions from './permissions';
 
+jest.mock('./components/RecentlyViewedDashboards', () => ({
+  RecentlyViewedDashboards: () => 'Recently viewed',
+}));
+
 setBackendSrv(backendSrv);
 setupMockServer();
 
@@ -339,6 +343,31 @@ describe('browse-dashboards BrowseDashboardsPage', () => {
       );
 
       expect(checkbox).toBeInTheDocument();
+    });
+  });
+
+  describe('recently viewed dashboards', () => {
+    beforeEach(() => {
+      (useParams as jest.Mock).mockReturnValue({});
+    });
+
+    afterEach(() => {
+      (useParams as jest.Mock).mockReturnValue({});
+    });
+
+    it('shows recently viewed dashboards at the root', async () => {
+      render(<BrowseDashboardsPage queryParams={{}} />);
+
+      expect(await screen.findByText('Recently viewed')).toBeInTheDocument();
+    });
+
+    it('hides recently viewed dashboards inside a folder', async () => {
+      (useParams as jest.Mock).mockReturnValue({ uid: folderA.item.uid });
+
+      render(<BrowseDashboardsPage queryParams={{}} />);
+
+      expect(await screen.findByRole('heading', { name: folderA.item.title })).toBeInTheDocument();
+      expect(screen.queryByText('Recently viewed')).not.toBeInTheDocument();
     });
   });
 
