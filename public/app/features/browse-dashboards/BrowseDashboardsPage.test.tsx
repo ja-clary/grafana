@@ -11,6 +11,7 @@ import { getFolderFixtures } from '@grafana/test-utils/unstable';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { contextSrv } from 'app/core/services/context_srv';
 
+import { getRecentlyViewedDashboards } from './api/recentlyViewed';
 import BrowseDashboardsPage from './BrowseDashboardsPage';
 import * as permissions from './permissions';
 
@@ -41,6 +42,29 @@ jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),
   useParams: jest.fn().mockReturnValue({}),
 }));
+
+jest.mock('./api/recentlyViewed', () => ({
+  getRecentlyViewedDashboards: jest.fn().mockResolvedValue([]),
+}));
+
+jest.mock('app/features/search/hooks/useDashboardLocationInfo', () => ({
+  useDashboardLocationInfo: () => ({ foldersByUid: {}, loading: false }),
+}));
+
+const getRecentlyViewedDashboardsMock = jest.mocked(getRecentlyViewedDashboards);
+
+const recentDashboard = {
+  kind: 'dashboard',
+  name: 'Latency overview',
+  uid: 'latency-overview',
+  url: '/d/latency-overview',
+  panel_type: '',
+  tags: [],
+  location: 'general',
+  ds_uid: [],
+  score: 0,
+  explain: {},
+};
 
 jest.mock('@grafana/runtime', () => {
   return {
@@ -78,6 +102,8 @@ describe('browse-dashboards BrowseDashboardsPage', () => {
 
   beforeEach(() => {
     config.unifiedAlertingEnabled = true;
+    getRecentlyViewedDashboardsMock.mockReset();
+    getRecentlyViewedDashboardsMock.mockResolvedValue([]);
     jest.spyOn(permissions, 'getFolderPermissions').mockImplementation(() => mockPermissions);
     jest.spyOn(contextSrv, 'hasPermission').mockReturnValue(true);
   });
@@ -131,6 +157,13 @@ describe('browse-dashboards BrowseDashboardsPage', () => {
       render(<BrowseDashboardsPage queryParams={{}} />);
       expect(await screen.findByRole('heading', { name: 'Dashboards' })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: 'Edit title' })).not.toBeInTheDocument();
+    });
+
+    it('shows recently viewed dashboards', async () => {
+      getRecentlyViewedDashboardsMock.mockResolvedValue([recentDashboard]);
+      render(<BrowseDashboardsPage queryParams={{}} />);
+      expect(await screen.findByRole('heading', { name: 'Recently viewed' })).toBeInTheDocument();
+      expect(screen.getByTestId('browseDashboardsRecentlyViewedTitle')).toBeInTheDocument();
     });
 
     it('does not show any tabs', async () => {
@@ -199,6 +232,14 @@ describe('browse-dashboards BrowseDashboardsPage', () => {
     it('shows the folder name as the page title', async () => {
       render(<BrowseDashboardsPage queryParams={{}} />);
       expect(await screen.findByRole('heading', { name: folderA.item.title })).toBeInTheDocument();
+    });
+
+    it('does not show recently viewed dashboards', async () => {
+      getRecentlyViewedDashboardsMock.mockResolvedValue([recentDashboard]);
+      render(<BrowseDashboardsPage queryParams={{}} />);
+      expect(await screen.findByRole('heading', { name: folderA.item.title })).toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Recently viewed' })).not.toBeInTheDocument();
+      expect(getRecentlyViewedDashboardsMock).not.toHaveBeenCalled();
     });
 
     it('displays a search input', async () => {
