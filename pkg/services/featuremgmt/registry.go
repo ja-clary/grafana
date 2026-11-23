@@ -1765,23 +1765,6 @@ var (
 			Expression:  "false",
 		},
 		{
-			Name:         "recentlyViewedDashboards",
-			Description:  "Enables recently viewed dashboards section in the browsing dashboard page",
-			Stage:        FeatureStageExperimental,
-			Owner:        grafanaFrontendSearchNavOrganise,
-			FrontendOnly: true,
-			Expression:   "false",
-		},
-		{
-			Name:         "experimentRecentlyViewedDashboards",
-			Description:  "A/A test for recently viewed dashboards feature",
-			Stage:        FeatureStageExperimental,
-			Owner:        grafanaFrontendSearchNavOrganise,
-			FrontendOnly: true,
-			HideFromDocs: true,
-			Expression:   "false",
-		},
-		{
 			Name:         "alertEnrichment",
 			Description:  "Enable configuration of alert enrichments in Grafana Cloud.",
 			Stage:        FeatureStageExperimental,
